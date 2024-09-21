@@ -10,5 +10,5 @@ Clone the Repo and follow **Usage**
 ## Usage
 
 1. build with `pyinstaller main.spec`
-2. Run`\dist\main.exe`
+2. Run `\dist\main.exe`
 3. ?? profit ??
