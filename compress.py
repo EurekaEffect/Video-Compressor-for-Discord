@@ -1,8 +1,18 @@
 import ffmpeg
 import os
-os.environ['path'] = 'bin/'
+import sys
 
-
+def get_ffmpeg_path():
+    if getattr(sys, 'frozen', False):
+        return os.path.join(getattr(sys, '_MEIPASS', ''), 'ffmpeg', 'ffmpeg.exe')
+    else:
+        return 'ffmpeg'
+    
+ffmpeg_path = get_ffmpeg_path()
+original_path = os.environ.get('PATH', '')
+ffmpeg_dir = os.path.dirname(ffmpeg_path)
+os.environ['PATH'] = f"{ffmpeg_dir}{os.pathsep}{original_path}"
+    
 def compress_video(video_full_path, size_upper_bound, frame_rate=30, two_pass=False, filename_suffix='_compressed'):
     """
     Compress video file to max-supported size.
@@ -28,8 +38,8 @@ def compress_video(video_full_path, size_upper_bound, frame_rate=30, two_pass=Fa
         # Video duration, in s.
         duration = float(probe['format']['duration'])
         # Audio bitrate, in bps.
-        audio_bitrate = float(next(
-            (s for s in probe['streams'] if s['codec_type'] == 'audio'), None)['bit_rate'])
+        audio_stream = next((s for s in probe['streams'] if s['codec_type'] == 'audio'), None)
+        audio_bitrate = float(audio_stream['bit_rate']) if audio_stream and 'bit_rate' in audio_stream else 0
         # Target total bitrate, in bps.
         target_total_bitrate = (
             size_upper_bound * 1024 * 8) / (1.073741824 * duration)

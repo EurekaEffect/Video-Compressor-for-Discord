@@ -1,4 +1,6 @@
 build/
+dist/
 __pycache__
 ffmpeg2pass-0.log
 ffmpeg2pass-0.log.mbtree
+main.spec

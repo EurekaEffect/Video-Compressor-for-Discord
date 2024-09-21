@@ -1,10 +1,9 @@
 # import tkinter as tk  # Import tkinter module and alias tk
 from tkinter import *
+import tkinter as tk
 from tkinter import filedialog
 from compress import compress_video
 from tkinter import ttk
-from ttkthemes import ThemedTk
-from tkdnd import *
 
 def get_path(event):
     if event.data.endswith(".mp4}"):
@@ -19,7 +18,7 @@ def compress():
         text_entry.get(), limit_file_size.get(), frame_rate.get()
     )
     if r == True:
-        result_lab.config(text="Done !")
+        result_lab.config(text="Done!")
     else:
         result_lab.config(text='Error')
 
@@ -32,7 +31,7 @@ def browseFiles():
     text_entry.insert(0, filename)
 
 
-wind = TkinterDnD.Tk() # Establishing top level control wind
+wind = tk.Tk() # Establishing top level control wind
 windHeight = wind.winfo_height()
 windWidth = wind.winfo_width()
 
@@ -42,15 +41,13 @@ wind.eval('tk::PlaceWindow . center')
 wind.title("Video transcoding")  # Set window title
 
 # Create Title and feedback text
-title_lab = ttk.Label(wind, text="Video compression", font="Arial 14")
+title_lab = ttk.Label(wind, text="Discord Compression", font="Arial 14")
 result_lab = ttk.Label(wind, text="")
 
 # create a frame containing an Entry and the button to explore files
 frame2 = Frame(wind)
 
 text_entry = ttk.Entry(frame2)
-wind.drop_target_register(DND_ALL)
-wind.dnd_bind("<<Drop>>", get_path)
 
 button_explore = ttk.Button(
     frame2, text="...", width=7, command=browseFiles
@@ -59,10 +56,9 @@ button_explore = ttk.Button(
 # create a frame containing 3 radio button for different file size
 frame = Frame(wind)
 limit_file_size = IntVar()
-R1 = ttk.Radiobutton(frame, text="25MB", variable=limit_file_size, value=25000)
-R2 = ttk.Radiobutton(frame, text="100MB", variable=limit_file_size, value=100000)
-R3 = ttk.Radiobutton(frame, text="500MB",
-                     variable=limit_file_size, value=500000)
+R1 = ttk.Radiobutton(frame, text="10MB", variable=limit_file_size, value=(10*1000))
+R2 = ttk.Radiobutton(frame, text="50MB", variable=limit_file_size, value=(50*1000))
+R3 = ttk.Radiobutton(frame, text="500MB", variable=limit_file_size, value=(500*1000))
 R1.invoke()  # R1 is selectionned by default
 
 # create a frame containing 2 radio button for different frame rate
@@ -70,7 +66,7 @@ frame3 = Frame(wind)
 frame_rate = IntVar()
 R_fps30 = ttk.Radiobutton(frame3, text="30fps", variable=frame_rate, value=30)
 R_fps60 = ttk.Radiobutton(frame3, text="60fps", variable=frame_rate, value=60)
-R_fps30.invoke()
+R_fps60.invoke()
 
 # Set the submit button, and set the font style and size
 btn = ttk.Button(wind, text="Go !", width=windWidth-20, command=compress)
