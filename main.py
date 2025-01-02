@@ -14,8 +14,10 @@ def get_path(event):
         text_entry.insert(0, sanitise_path)
 
 def compress():
+    size = int(scale.get())  # Get the current slider value
+
     r = compress_video(
-        text_entry.get(), limit_file_size.get(), frame_rate.get()
+        text_entry.get(), size * 1000, frame_rate.get()
     )
     if r == True:
         result_lab.config(text="Done!")
@@ -35,7 +37,7 @@ wind = tk.Tk() # Establishing top level control wind
 windHeight = wind.winfo_height()
 windWidth = wind.winfo_width()
 
-wind.geometry("200x200")  # Set window size
+wind.geometry("320x200")  # Set window size
 wind.resizable(False, False)
 wind.eval('tk::PlaceWindow . center')
 wind.title("Video transcoding")  # Set window title
@@ -56,10 +58,10 @@ button_explore = ttk.Button(
 # create a frame containing 3 radio button for different file size
 frame = Frame(wind)
 limit_file_size = IntVar()
-R1 = ttk.Radiobutton(frame, text="10MB", variable=limit_file_size, value=(10*1000))
-R2 = ttk.Radiobutton(frame, text="50MB", variable=limit_file_size, value=(50*1000))
-R3 = ttk.Radiobutton(frame, text="500MB", variable=limit_file_size, value=(500*1000))
-R1.invoke()  # R1 is selectionned by default
+# Create a Scale (slider) widget to select file size from 1MB to 250MB
+scale = ttk.Scale(frame, from_=1, to=250, variable=limit_file_size, orient="horizontal", length=300)
+scale.set(8)  # Set the default value to 8MB
+scale.pack(padx=10, pady=5)
 
 # create a frame containing 2 radio button for different frame rate
 frame3 = Frame(wind)
@@ -69,8 +71,15 @@ R_fps60 = ttk.Radiobutton(frame3, text="60fps", variable=frame_rate, value=60)
 R_fps60.invoke()
 
 # Set the submit button, and set the font style and size
-btn = ttk.Button(wind, text="Go !", width=windWidth-20, command=compress)
+btn = ttk.Button(wind, text="Compress to 8MB", width=windWidth-20, command=compress)
 
+# Update the label and button text with the selected value when the slider moves
+def update_text(event):
+    size = int(scale.get())  # Get the current slider value
+    btn.config(text=f"Compress to {size}MB")  # Update button text
+
+# Bind the slider motion to update the label and button text
+scale.bind("<Motion>", update_text)
 
 # Positioning everything on the grid
 
@@ -81,9 +90,6 @@ text_entry.grid(column=1, row=1)
 button_explore.grid(column=2, row=1)
 
 frame.grid(column=1, row=8, pady=4)
-R1.pack(side=LEFT)
-R2.pack(side=LEFT)
-R3.pack(side=LEFT)
 
 frame3.grid(column=1, row=9, pady=4)
 R_fps30.pack(side=LEFT)
